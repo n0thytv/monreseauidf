@@ -1,0 +1,50 @@
+﻿{
+    "success":  true,
+    "line_id":  "IDFM:C01744",
+    "line_name":  "Ligne",
+    "mode":  "metro",
+    "operator":  "IDFM",
+    "theoretical_schedules":  {
+                                  "weekday":  {
+                                                  "first_train":  "05:30",
+                                                  "last_train":  "00:30",
+                                                  "frequency_peak":  "2-3 min",
+                                                  "frequency_offpeak":  "4-6 min",
+                                                  "frequency_night":  "8-10 min"
+                                              },
+                                  "saturday":  {
+                                                   "first_train":  "05:30",
+                                                   "last_train":  "01:00",
+                                                   "frequency_peak":  "3-4 min",
+                                                   "frequency_offpeak":  "5-7 min",
+                                                   "frequency_night":  "8-10 min"
+                                               },
+                                  "sunday":  {
+                                                 "first_train":  "06:00",
+                                                 "last_train":  "00:30",
+                                                 "frequency_peak":  "4-5 min",
+                                                 "frequency_offpeak":  "6-8 min",
+                                                 "frequency_night":  "10-12 min"
+                                             },
+                                  "friday_saturday_night":  {
+                                                                "last_train":  "02:15",
+                                                                "note":  "Service prolongé les nuits de vendredi à samedi et samedi à dimanche"
+                                                            }
+                              },
+    "service_info":  {
+                         "service_hours":  "De 5h30 à 0h30 (1h15 le week-end)",
+                         "frequency_info":  "Un métro toutes les 2 à 8 minutes selon l\u0027heure",
+                         "accessibility":  "Ligne à accessibilité variable selon les stations",
+                         "tips":  [
+                                      "Évitez les heures de pointe (8h-9h30 et 17h30-19h30)",
+                                      "Le week-end, service prolongé jusqu\u0027à 2h15",
+                                      "Consultez l\u0027état du trafic avant de partir"
+                                  ]
+                     },
+    "peak_hours":  {
+                       "morning":  "07:30 - 09:30",
+                       "evening":  "17:00 - 19:30"
+                   },
+    "realtime_available":  false,
+    "message":  "Horaires théoriques - Pour le temps réel, utilisez l\u0027application IDFM"
+}

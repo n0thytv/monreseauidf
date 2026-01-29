@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(findstr:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:data.iledefrance-mobilites.fr)",
+      "Bash(php:*)",
+      "Bash(C:wamp64binphpphp8.2.0php.exe -r \"$data = json_decode\\(file_get_contents\\(''cache/lignes.json''\\), true\\); echo ''=== LIGNES RER ==='' . PHP_EOL; foreach\\($data[''records''] as $l\\) { if\\(strtolower\\($l[''transportmode''] ?? ''''\\) == ''rer''\\) { echo $l[''id_line''] . '' | '' . $l[''shortname_line''] . '' | '' . $l[''name_line''] . '' | '' . $l[''operatorname''] . PHP_EOL; } }\")",
+      "Bash(del /f \"C:\\\\wamp64\\\\www\\\\monreseauidf\\\\temp_rer_check.php\")",
+      "WebFetch(domain:localhost)"
+    ]
+  }
+}
