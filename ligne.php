@@ -1140,114 +1140,88 @@ $pageTitle = 'Détail de la ligne';
             `).join('');
         }
 
-        // Load schedule data
+        // Load schedule data - UNIQUEMENT données temps réel
         async function loadSchedules(lineId) {
             try {
                 const response = await fetch('<?php echo SITE_URL; ?>/api/horaires.php?line=' + lineId);
                 const data = await response.json();
 
-                if (data.success) {
-                    // Avertissement horaires indicatifs + lien officiel OU indicateur temps réel
-                    let scheduleStatus = '';
-                    if (data.is_indicative) {
-                        scheduleStatus = `
-                            <div style="background: #FEF3C7; border: 1px solid #F59E0B; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                                <div style="display: flex; align-items: center; gap: 8px; color: #92400E;">
-                                    <span>⚠️</span>
-                                    <span style="font-weight: 600;">Horaires indicatifs</span>
-                                </div>
-                                <p style="font-size: 13px; color: #92400E; margin: 8px 0 0 0;">
-                                    ${data.message || 'Ces horaires sont des moyennes pour ce type de ligne.'}
-                                    ${data.official_idfm_url ? `<br><a href="${data.official_idfm_url}" target="_blank" style="color: #1D4ED8; font-weight: 600;">Voir les fiches horaires IDFM →</a>` : ''}
-                                </p>
+                // Afficher les prochains passages réels
+                if (data.realtime_available && data.next_departures?.length > 0) {
+                    const departures = data.next_departures;
+                    const stopName = data.departure_stop || 'Terminus';
+
+                    document.getElementById('service-hours').innerHTML = `
+                        <div style="background: #D1FAE5; border: 1px solid #10B981; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #065F46;">
+                                <span>⚡</span>
+                                <span style="font-weight: 600;">Données temps réel IDFM</span>
                             </div>
-                        `;
-                    } else if (data.realtime_schedule?.next_departures?.length > 0) {
-                        const nextDeps = data.realtime_schedule.next_departures.slice(0, 3).join(', ');
-                        scheduleStatus = `
-                            <div style="background: #D1FAE5; border: 1px solid #10B981; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                                <div style="display: flex; align-items: center; gap: 8px; color: #065F46;">
-                                    <span>⚡</span>
-                                    <span style="font-weight: 600;">Données temps réel</span>
-                                </div>
-                                <p style="font-size: 13px; color: #065F46; margin: 8px 0 0 0;">
-                                    Prochains passages : <strong>${nextDeps}</strong>
-                                </p>
+                            <p style="font-size: 13px; color: #065F46; margin: 4px 0 0 0;">
+                                Départs depuis <strong>${stopName}</strong>
+                            </p>
+                        </div>
+                        ${departures.map(dep => `
+                            <div class="info-row">
+                                <span class="info-label">${dep.destination || 'Direction inconnue'}</span>
+                                <span class="info-value" style="font-weight: 700; color: var(--primary);">
+                                    ${dep.time} <span style="font-size: 12px; color: var(--gray-500);">(${dep.wait_minutes} min)</span>
+                                </span>
                             </div>
-                        `;
-                    }
-
-                    // Service hours
-                    const schedules = data.theoretical_schedules;
-                    const mode = data.mode || 'metro';
-                    const isNightService = mode === 'metro' || mode === 'rer' || mode === 'tram';
-
-                    document.getElementById('service-hours').innerHTML = scheduleStatus + `
-                        <div class="info-row">
-                            <span class="info-label">Premier départ (semaine)</span>
-                            <span class="info-value">${schedules.weekday?.first_train || '05:30'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Dernier départ (semaine)</span>
-                            <span class="info-value">${schedules.weekday?.last_train || '00:30'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Premier départ (dimanche)</span>
-                            <span class="info-value">${schedules.sunday?.first_train || '06:00'}</span>
-                        </div>
-                        ${isNightService ? `
-                        <div class="info-row">
-                            <span class="info-label">Service prolongé week-end</span>
-                            <span class="info-value">Jusqu'à ${schedules.friday_saturday_night?.last_train || '02:15'}</span>
-                        </div>
-                        ` : ''}
-                    `;
-
-                    // Frequency
-                    document.getElementById('frequency-info').innerHTML = `
-                        <div class="info-row">
-                            <span class="info-label">Heures de pointe</span>
-                            <span class="info-value" style="color: var(--primary); font-weight: 700;">⚡ ${schedules.weekday?.frequency_peak || '2-3 min'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Heures creuses</span>
-                            <span class="info-value">${schedules.weekday?.frequency_offpeak || '4-6 min'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Soirée / Week-end</span>
-                            <span class="info-value">${schedules.weekday?.frequency_night || '8-10 min'}</span>
+                        `).join('')}
+                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-100);">
+                            <a href="${data.official_idfm_url || data.official_url || '#'}" target="_blank"
+                               style="color: var(--primary); font-size: 13px; text-decoration: none;">
+                                Voir tous les horaires sur IDFM →
+                            </a>
                         </div>
                     `;
 
-                    // Peak hours
-                    document.getElementById('peak-hours').innerHTML = `
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-                            <div style="padding: 16px; background: linear-gradient(135deg, #ff6b6b20, #ff6b6b10); border-radius: 12px; text-align: center;">
-                                <div style="font-size: 2rem; margin-bottom: 8px;">🌅</div>
-                                <div style="font-weight: 600; color: #ff6b6b;">Matin</div>
-                                <div style="font-size: 1.25rem; font-weight: 700;">${data.peak_hours?.morning || '07:30 - 09:30'}</div>
+                    // Cacher les sections inutiles
+                    document.getElementById('frequency-info').innerHTML = '';
+                    document.getElementById('peak-hours').innerHTML = '';
+                    document.getElementById('travel-tips').innerHTML = '';
+
+                } else {
+                    // Pas de données temps réel disponibles
+                    document.getElementById('service-hours').innerHTML = `
+                        <div style="background: #FEF3C7; border: 1px solid #F59E0B; border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #92400E;">
+                                <span>⚠️</span>
+                                <span style="font-weight: 600;">Aucun passage prévu</span>
                             </div>
-                            <div style="padding: 16px; background: linear-gradient(135deg, #ffa50020, #ffa50010); border-radius: 12px; text-align: center;">
-                                <div style="font-size: 2rem; margin-bottom: 8px;">🌆</div>
-                                <div style="font-weight: 600; color: #ffa500;">Soir</div>
-                                <div style="font-size: 1.25rem; font-weight: 700;">${data.peak_hours?.evening || '17:00 - 19:30'}</div>
-                            </div>
+                            <p style="font-size: 13px; color: #92400E; margin: 8px 0 0 0;">
+                                ${data.message || 'Aucun départ prévu actuellement pour cette ligne.'}
+                            </p>
+                            <p style="margin-top: 12px;">
+                                <a href="${data.official_idfm_url || data.official_url || 'https://www.iledefrance-mobilites.fr/fiches-horaires'}"
+                                   target="_blank" style="color: #1D4ED8; font-weight: 600;">
+                                    Consulter les fiches horaires IDFM →
+                                </a>
+                            </p>
                         </div>
                     `;
 
-                    // Tips
-                    const tips = data.service_info?.tips || [];
-                    document.getElementById('travel-tips').innerHTML = tips.map(tip => `
-                        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100);">
-                            <span style="font-size: 1.2rem;">✓</span>
-                            <span style="color: var(--gray-700);">${tip}</span>
-                        </div>
-                    `).join('');
+                    // Cacher les sections inutiles
+                    document.getElementById('frequency-info').innerHTML = '';
+                    document.getElementById('peak-hours').innerHTML = '';
+                    document.getElementById('travel-tips').innerHTML = '';
                 }
+
             } catch (error) {
                 console.error('Schedule error:', error);
-                document.getElementById('service-hours').innerHTML = '<p style="color: var(--gray-500);">Horaires non disponibles</p>';
-                document.getElementById('frequency-info').innerHTML = '<p style="color: var(--gray-500);">Information non disponible</p>';
+                document.getElementById('service-hours').innerHTML = `
+                    <div style="background: #FEE2E2; border: 1px solid #EF4444; border-radius: 8px; padding: 12px;">
+                        <p style="color: #991B1B; margin: 0;">Impossible de charger les horaires. Réessayez plus tard.</p>
+                        <p style="margin-top: 8px;">
+                            <a href="https://www.iledefrance-mobilites.fr/fiches-horaires" target="_blank"
+                               style="color: #1D4ED8; font-weight: 600;">Consulter les horaires sur IDFM →</a>
+                        </p>
+                    </div>
+                `;
+                document.getElementById('frequency-info').innerHTML = '';
+                document.getElementById('peak-hours').innerHTML = '';
+                document.getElementById('travel-tips').innerHTML = '';
             }
         }
 

@@ -9,7 +9,16 @@
       "Bash(php:*)",
       "Bash(C:wamp64binphpphp8.2.0php.exe -r \"$data = json_decode\\(file_get_contents\\(''cache/lignes.json''\\), true\\); echo ''=== LIGNES RER ==='' . PHP_EOL; foreach\\($data[''records''] as $l\\) { if\\(strtolower\\($l[''transportmode''] ?? ''''\\) == ''rer''\\) { echo $l[''id_line''] . '' | '' . $l[''shortname_line''] . '' | '' . $l[''name_line''] . '' | '' . $l[''operatorname''] . PHP_EOL; } }\")",
       "Bash(del /f \"C:\\\\wamp64\\\\www\\\\monreseauidf\\\\temp_rer_check.php\")",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "Bash(for line in C00001 C00011 C00032 C00064 C00107)",
+      "Bash(do echo \"=== $line ===\")",
+      "Bash(done)",
+      "Bash(for line in C00011 C00032 C00064 C00107)",
+      "Bash(wc:*)",
+      "Bash(dir \"C:\\\\wamp64\\\\www\\\\monreseauidf\\\\cache\")",
+      "Bash(dir:*)",
+      "Bash(\"C:\\\\wamp64\\\\bin\\\\php\\\\php8.2.13\\\\php.exe\" -r \"$file = ''C:/wamp64/www/monreseauidf/cache/gtfs/extracted/stops.txt''; $handle = fopen\\($file, ''r''\\); $header = fgetcsv\\($handle\\); $headerMap = array_flip\\($header\\); $locationTypes = []; $total = 0; while \\(\\($row = fgetcsv\\($handle\\)\\) !== false\\) { $locationType = $row[$headerMap[''location_type'']] ?? ''empty''; if \\(!isset\\($locationTypes[$locationType]\\)\\) { $locationTypes[$locationType] = 0; } $locationTypes[$locationType]++; $total++; } fclose\\($handle\\); echo ''Total: ''.$total.PHP_EOL; print_r\\($locationTypes\\);\")",
+      "Bash(del \"C:\\\\wamp64\\\\www\\\\monreseauidf\\\\cache\\\\stops_index.json\")"
     ]
   }
 }

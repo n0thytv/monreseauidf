@@ -142,17 +142,18 @@ $site_description = getSetting($pdo, 'site_description', '');
                                 placeholder="Votre clé API PRIM" value="<?php echo sanitize($idfm_api_key); ?>">
                             <span class="form-text">
                                 Obtenez votre clé sur <a href="https://prim.iledefrance-mobilites.fr"
-                                    target="_blank">prim.iledefrance-mobilites.fr</a>
+                                    target="_blank">prim.iledefrance-mobilites.fr</a><br>
+                                Cette clé est utilisée pour les prochains passages et le calcul d'itinéraires.
                             </span>
                         </div>
 
                         <?php if ($idfm_api_key): ?>
                             <div class="alert alert-success" style="margin-bottom: var(--spacing-4);">
-                                ✅ Clé API configurée
+                                ✅ Clé API IDFM configurée - Temps réel et itinéraires activés
                             </div>
                         <?php else: ?>
                             <div class="alert alert-warning" style="margin-bottom: var(--spacing-4);">
-                                ⚠️ Clé API non configurée - Les fonctionnalités IDFM seront limitées
+                                ⚠️ Clé API IDFM non configurée - Les fonctionnalités temps réel et itinéraires seront désactivées
                             </div>
                         <?php endif; ?>
 

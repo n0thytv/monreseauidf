@@ -25,24 +25,29 @@ include __DIR__ . '/includes/header.php';
                         d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
                         fill="#3B82F6" />
                 </svg> Où allons-nous ?</h3>
-            <form class="search-form" action="#" method="GET">
-                <div class="form-group">
+            <form class="search-form" id="trip-search-form" action="itineraire.php" method="GET">
+                <div class="form-group autocomplete-container">
                     <label for="departure">DÉPART</label>
-                    <input type="text" id="departure" name="departure" placeholder="Gare, station, arrêt ou lieu">
+                    <input type="text" id="departure" name="departure_name" placeholder="Gare, station, arrêt ou lieu" autocomplete="off">
+                    <input type="hidden" id="departure-id" name="from">
+                    <div class="autocomplete-dropdown" id="departure-dropdown"></div>
                 </div>
-                <button type="button" class="swap-btn" title="Inverser">⇄</button>
-                <div class="form-group">
+                <button type="button" class="swap-btn" id="swap-btn" title="Inverser">⇄</button>
+                <div class="form-group autocomplete-container">
                     <label for="arrival">ARRIVÉE</label>
-                    <input type="text" id="arrival" name="arrival" placeholder="Gare, station, arrêt ou lieu">
+                    <input type="text" id="arrival" name="arrival_name" placeholder="Gare, station, arrêt ou lieu" autocomplete="off">
+                    <input type="hidden" id="arrival-id" name="to">
+                    <div class="autocomplete-dropdown" id="arrival-dropdown"></div>
                 </div>
-                <div class="form-group">
-                    <label for="datetime">QUAND</label>
-                    <select id="datetime" name="datetime">
-                        <option value="now">Partir maintenant</option>
-                        <option value="later">Choisir l'heure</option>
+                <div class="form-group datetime-group">
+                    <label for="datetime-type">QUAND</label>
+                    <select id="datetime-type" name="datetime_represents">
+                        <option value="departure">Partir à</option>
+                        <option value="arrival">Arriver avant</option>
                     </select>
+                    <input type="datetime-local" id="datetime" name="datetime" class="datetime-input">
                 </div>
-                <button type="submit" class="btn btn-accent btn-lg">Rechercher</button>
+                <button type="submit" class="btn btn-accent btn-lg" id="search-btn">Rechercher</button>
             </form>
         </div>
     </div>
@@ -170,4 +175,9 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
+<script>
+    // Configuration pour le JavaScript
+    window.SITE_URL = '<?php echo SITE_URL; ?>';
+</script>
+<script src="<?php echo SITE_URL; ?>/js/trip-planner.js?v=<?php echo time(); ?>"></script>
 <?php include __DIR__ . '/includes/footer.php'; ?>
